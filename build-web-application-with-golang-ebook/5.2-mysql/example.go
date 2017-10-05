@@ -11,20 +11,25 @@ func main() {
 	db, err := sql.Open("mysql", "leogsouza:@/c9?charset=UTF8")
 	checkErr(err)
 
-	// insert
-	stmt, err := db.Prepare("INSERT userinfo SET username=?, departname=?, created=?")
-	checkErr(err)
+	for i := 1; i <= 1000; i++ {
+		// insert
+		stmt, err := db.Prepare("INSERT userinfo SET username=?, departname=?, created=?")
+		checkErr(err)
+		username := randomdata.SillyName()
+		department := randomdata.SillyName()
+		created := randomdata.FullDate()
+		res, err := stmt.Exec(username, department, created)
+		checkErr(err)
 
-	res, err := stmt.Exec("leogsouza", "Project Development", "2016-10-03")
-	checkErr(err)
+		id, err := res.LastInsertId()
+		checkErr(err)
 
-	id, err := res.LastInsertId()
-	checkErr(err)
-
-	fmt.Println("Last inserted ID", id)
+		fmt.Println("Last inserted ID", id)
+		stmt.Close()
+	}
 
 	// update
-	stmt, err = db.Prepare("update userinfo set username= ? where uid=?")
+	/*stmt, err = db.Prepare("update userinfo set username= ? where uid=?")
 	checkErr(err)
 
 	res, err = stmt.Exec("legosuz", id)
@@ -33,7 +38,7 @@ func main() {
 	affect, err := res.RowsAffected()
 	checkErr(err)
 
-	fmt.Println("Rows affected", affect)
+	fmt.Println("Rows affected", affect)*/
 
 	// query
 	rows, err := db.Query("SELECT * FROM userinfo")
@@ -55,7 +60,7 @@ func main() {
 	}
 
 	// delete
-	stmt, err = db.Prepare("delete from userinfo where uid=?")
+	/*stmt, err = db.Prepare("delete from userinfo where uid=?")
 	checkErr(err)
 
 	res, err = stmt.Exec(id)
@@ -63,7 +68,7 @@ func main() {
 
 	affect, err = res.RowsAffected()
 	checkErr(err)
-	fmt.Println("Rows affected on delete", affect)
+	fmt.Println("Rows affected on delete", affect)*/
 
 	db.Close()
 }
